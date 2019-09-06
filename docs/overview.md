@@ -3,7 +3,7 @@
 The parameter server aims for high-performance distributed machine learning
 applications. In this framework, multiple nodes runs over multiple machines to
 solve machine learning problems.
-There are often a single schedule node, and several worker and servers nodes.
+There is often a single scheduler node, and several worker and servers nodes.
 
 ![ps arch](https://raw.githubusercontent.com/dmlc/dmlc.github.io/master/img/ps-arch.png)
 
@@ -54,10 +54,10 @@ while (Received(&grad)) {
   t++;
 }
 ```
-where the function `received` returns if received gradient from any worker
+where the function `received` returns if it received a gradient from any worker
 node, and `eta` returns the learning rate at time *t*.
 
-While for a worker, each time it dose four things
+While for a worker, each time it does four things
 
 ```c++
 Read(&X, &Y);  // read a minibatch X and Y
@@ -65,13 +65,13 @@ Pull(&w);      // pull the recent weight from the servers
 ComputeGrad(X, Y, w, &grad);  // compute the gradient
 Push(grad);    // push the gradients to the servers
 ```
-where ps-lite will provide function `push` and `pull` which will communicate
+where ps-lite will provide functions `push` and `pull` which will communicate
 with servers with the right part of data.
 
 Note that asynchronous SGD is semantically different the single machine
 version. Since there is no communication between workers, so it is possible that
 the weight is updated while one worker is calculating the gradients. In other
-words, each worker may used the **delayed** weights. The following figure
+words, each worker may have used the **delayed** weights. The following figure
 shows the communication with 2 server nodes and 3 worker nodes.
 
 <img src="https://raw.githubusercontent.com/dmlc/web-data/master/ps-lite/async_sgd.png"  width=500 />
@@ -95,10 +95,10 @@ for (t = 0, t < num_iteration; ++t) {
 }
 ```
 
-where `IssueComputeGrad` and `IssueUpdateWeight` issue commands to worker and
-servers, while `WaitAllFinished` wait until all issued commands are finished.
+where `IssueComputeGrad` and `IssueUpdateWeight` issue commands to the worker and
+servers, while `WaitAllFinished` waits until all issued commands are finished.
 
-When worker received a command, it executes the following function,
+When a worker receives a command, it executes the following function,
 ```c++
 ExecComputeGrad(i, t) {
    Read(&X, &Y);  // read minibatch with b / num_workers examples
@@ -107,10 +107,10 @@ ExecComputeGrad(i, t) {
    Push(grad);    // push the gradients to the servers
 }
 ```
-which is almost identical to asynchronous SGD but only *b/num_workers* examples
+which is almost identical to asynchronous SGD but only **num_workers** examples
 are processed each time.
 
-While for a server node, it has an additional aggregation step comparing to
+While for a server node, it has an additional aggregation step when compared to
 asynchronous SGD
 
 ```c++
@@ -128,7 +128,7 @@ ExecUpdateWeight(i, t) {
 Comparing to a single machine algorithm, the distributed algorithms have two
 additional costs, one is the data communication cost, namely sending data over
 the network; the other one is synchronization cost due to the imperfect load
-balance and performance variance cross machines. These two costs may dominate
+balance and performance variance across machines. These two costs may dominate
 the performance for large scale applications with hundreds of machines and
 terabytes of data.
 
@@ -160,8 +160,8 @@ What we can see are
 - the maximal allowed delay trade-offs the convergence and synchronization
   cost. In synchronized SGD, we have *τ=0* and therefore it suffers a large
   synchronization cost. While asynchronous SGD uses an infinite *τ* to eliminate
-  this cost. In practice, an infinite *τ* is unlikely happens. But we also place
-  a upper bound of *τ* to guarantee the convergence with some synchronization
+  this cost. In practice, an infinite *τ* is unlikely to happen. But we also place
+  an upper bound of *τ* to guarantee the convergence with some synchronization
   costs.
 
 ## Further Reads
@@ -182,3 +182,4 @@ name some of them
 - [Li, WSDM'16](http://www.cs.cmu.edu/~yuxiangw/docs/fm.pdf) practical
   considerations for asynchronous SGD with the parameter server
 - [Chen, LearningSys'16]() synchronized SGD for deep learning.
+

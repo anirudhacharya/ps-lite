@@ -59,16 +59,17 @@ environment variables.
 
 ## Retransmission for Unreliable Network
 
-It's not uncommon that a message disappear when sending from one node to another
+It's not uncommon that a message may disappear when sending from one node to another
 node. The program hangs when a critical message is not delivered
 successfully. In that case, we can let PS-Lite send an additional ACK for each
 message, and resend that message if the ACK is not received within a given
 time. To enable this feature, we can set the environment variables
 
-- `PS_RESEND` : if or not enable retransmission. Default is 0.
-- `PS_RESEND_TIMEOUT` : timeout in millisecond if an ACK message if not
-  received. PS-Lite then will resend that message. Default is 1000.
+- `PS_RESEND` : if or not to enable retransmission. Default is 0.
+- `PS_RESEND_TIMEOUT` : timeout in millisecond if an ACK message is not
+  received. PS-Lite will then resend that message. Default is 1000.
 
-We can set `PS_DROP_MSG`, the percent of probability to drop a received
+We can set `PS_DROP_MSG`, the percentage probability of dropping a received
 message, for testing. For example, `PS_DROP_MSG=10` will let a node drop a
 received message with 10% probability.
+
